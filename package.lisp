@@ -1,5 +1,5 @@
 ;;;; package.lisp
 
-(defpackage #:cl-dirt
+(defpackage #:cepl-dirt
   (:use #:cl))
 
