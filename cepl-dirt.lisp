@@ -2,5 +2,11 @@
 
 (in-package #:cepl-dirt)
 
-;;; "cepl-dirt" goes here. Hacks and glory await!
+(defun load-image ())
 
+
+
+(defun load-image (filepath &optional (format :rgba))
+  (unless (find format '(:rgba :rgb))
+    (error "Format must be either :rgb or :rgba"))
+  (let ((result (cl-soil:load-image filepath format)))))
