@@ -23,21 +23,10 @@
               channels))))
 
 (defun load-image-to-texture (filepath &optional texture (format :rgba))
-  (%load-image-to-texture filepath texture format))
-
-(defgeneric %load-image-to-texture (filepath texture format))
-
-(defmethod %load-image-to-texture (filepath (texture null) format)
   (let ((data (load-image filepath format)))
-    (unwind-protect (cgl:make-texture :initial-contents data)
-      (cgl:free-c-array data))))
-
-(defmethod %load-image-to-texture (filepath (texture cgl:gl-texture) format)
-  (let ((data (load-image filepath format)))
-    (unwind-protect (cgl:gl-push (cgl:texref texture) data)
-      (cgl:free-c-array data))))
-
-(defmethod %load-image-to-texture (filepath (texture cgl:gpu-array-t) format)
-  (let ((data (load-image filepath format)))
-    (unwind-protect (cgl:gl-push texture data)
+    (unwind-protect 
+         (case (type-of texture)
+           (null (cgl:make-texture :initial-contents data))
+           (cgl:gl-texture (cgl:gl-push (cgl:texref texture) data))
+           (cgl:gpu-array-t (cgl:gl-push texture data)))
       (cgl:free-c-array data))))
