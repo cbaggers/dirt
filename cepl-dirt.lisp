@@ -25,8 +25,8 @@
 (defun load-image-to-texture (filepath &optional texture (format :rgba))
   (let ((data (load-image filepath format)))
     (unwind-protect 
-         (case (type-of texture)
-           (null (cgl:make-texture :initial-contents data))
-           (cgl:gl-texture (cgl:gl-push (cgl:texref texture) data))
-           (cgl:gpu-array-t (cgl:gl-push texture data)))
+         (cond ((typep texture 'null) (cgl:make-texture :initial-contents data))
+               ((typep texture 'cgl:gl-texture) (cgl:gl-push 
+                                                 (cgl:texref texture) data))
+               ((typep texture 'cgl:gpu-array-t) (cgl:gl-push texture data)))
       (cgl:free-c-array data))))
