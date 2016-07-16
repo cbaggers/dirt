@@ -1,8 +1,6 @@
 ;;;; package.lisp
 
-(defpackage #:cepl-dirt
+(defpackage #:dirt
   (:use #:cl)
-  (:nicknames :dirt)
   (:export :load-image
            :load-image-to-texture))
-

@@ -1,6 +1,6 @@
-;;;; cepl-dirt.lisp
+;;;; dirt.lisp
 
-(in-package #:cepl-dirt)
+(in-package #:dirt)
 
 (defun check-formats (format)
   (if (find format '(:rgba :rgb))

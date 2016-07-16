@@ -1,11 +1,10 @@
-;;;; cepl-dirt.asd
+;;;; dirt.asd
 
-(asdf:defsystem #:cepl-dirt
+(asdf:defsystem #:dirt
   :serial t
   :description "A front-end for cepl-soil which loads images straight to cepl:c-arrays and cepl:textures"
   :author "Baggers"
   :license "LLGPL"
   :depends-on (#:cepl #:cl-soil)
   :components ((:file "package")
-               (:file "cepl-dirt")))
-
+               (:file "dirt")))
