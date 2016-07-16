@@ -2,5 +2,5 @@
 
 (defpackage #:dirt
   (:use #:cl)
-  (:export :load-image
+  (:export :load-image-to-c-array
            :load-image-to-texture))

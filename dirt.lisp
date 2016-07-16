@@ -2,38 +2,22 @@
 
 (in-package #:dirt)
 
-(defun check-formats (format)
-  (if (find format '(:rgba :rgb))
-      t
-      (error "Format must be either :rgb, :rgba or :auto~%Given ~s" format)))
+(defun load-image-to-c-array (filename)
+  (multiple-value-bind (ptr width height components)
+      (cl-soil:load-image filename)
+    (let ((elem-type (nth (1- components) '(nil nil :uint8-vec3 :uint8-vec4))))
+      (cepl:make-c-array-from-pointer (list width height) elem-type ptr))))
 
-(defun dirt-format-to-cepl-format (format)
-  (case format
-    (:rgb :uint8-vec3)
-    (:rgba :uint8-vec4)))
-(defun dirt-format-to-texture-internal (format)
-  (case format
-    (:rgb :rgb8)
-    (:rgba :rgba8)))
 
-(defun load-image (filepath &optional (format :rgba))
-  "Load image from disk to c-array"
-  (when (check-formats format)
-    (destructuring-bind (pointer width height channels)
-        (cl-soil:load-image filepath format)
-      (values (cgl:make-c-array-from-pointer
-               (list width height)
-               (dirt-format-to-cepl-format format)
-               pointer)
-              channels))))
-
-(defun load-image-to-texture (filepath &optional texture (format :rgba))
-  (let ((data (load-image filepath format))
-        (internal-format (dirt-format-to-texture-internal format)))
-    (unwind-protect
-         (cond ((typep texture 'null) (cgl:make-texture
-                                       data :internal-format internal-format))
-               ((typep texture 'cgl:gl-texture) (cgl:gl-push
-                                                 (cgl:texref texture) data))
-               ((typep texture 'cgl:gpu-array-t) (cgl:gl-push texture data)))
-      (cgl:free-c-array data))))
+(defun load-image-to-texture (filename &optional (image-format :rgba8) mipmap
+					 generate-mipmaps)
+  (let* ((array (load-image-to-c-array filename))
+	 (pixel-format (cepl:lisp-type->pixel-format :uint8-vec4))
+	 (texture (cepl:make-texture
+		   array
+		   :element-type image-format
+		   :pixel-format pixel-format
+		   :mipmap mipmap
+		   :generate-mipmaps generate-mipmaps)))
+    (cepl:free-c-array array)
+    texture))
