@@ -37,7 +37,7 @@
     (labels ((path->fmt (path)
                (let ((tmp (pathname-type path)))
                  (when tmp (intern (string-upcase tmp) :keyword)))))
-      (let* ((path (uiop:coerce-pathname file-path))
+      (let* ((path (uiop:ensure-pathname file-path))
              (format (or format (path->fmt path))))
         (assert (member format *valid-save-image-formats*) (format)
                 "Dirt: save-as-image can only save in the following formats:~%~a~%~%However the format ~a was requested"
