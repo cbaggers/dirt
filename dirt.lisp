@@ -30,7 +30,7 @@
 (defgeneric save-as-image (texture file-path &optional format)
   ;;
   (:method ((texture cepl:texture) file-path &optional format)
-           (cepl:with-c-array (arr (cepl:pull1-g texture))
+           (cepl:with-c-array-freed (arr (cepl:pull1-g texture))
              (save-as-image arr file-path format)))
   ;;
   (:method ((image cepl:c-array) file-path &optional format)
