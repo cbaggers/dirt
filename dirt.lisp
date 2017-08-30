@@ -14,7 +14,8 @@
       (declare (ignore components))
       (let ((elem-type (nth (1- actual-components)
                             '(nil nil :uint8-vec3 :uint8-vec4))))
-        (cepl:make-c-array-from-pointer (list width height) elem-type ptr)))))
+        (cepl:make-c-array-from-pointer (list width height) elem-type ptr
+                                        :free #'cl-soil:free-image-data)))))
 
 (defun load-image-to-texture (filename &optional (image-format :rgba8) mipmap
                                          generate-mipmaps)
