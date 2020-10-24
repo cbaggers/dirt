@@ -5,6 +5,16 @@
 (defvar *valid-save-image-formats*
   '(:tga :bmp :dds))
 
+(defun load-image-from-memory-to-c-array (data-pointer data-length
+                                          &optional (image-format :rgba))
+  (multiple-value-bind (ptr width height components actual-components)
+      (cl-soil:load-image-from-memory data-pointer data-length image-format)
+    (declare (ignore components))
+    (let ((elem-type (nth (1- actual-components)
+                          '(nil nil :uint8-vec3 :uint8-vec4))))
+      (cepl:make-c-array-from-pointer (list width height) elem-type ptr
+                                      :free #'cl-soil:free-image-data))))
+
 (defun load-image-to-c-array (filename &optional (image-format :rgba))
   (let ((filename (if (pathnamep filename)
                       (namestring filename)
